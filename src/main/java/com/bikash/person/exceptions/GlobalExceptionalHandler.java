@@ -53,4 +53,10 @@ public class GlobalExceptionalHandler {
         return  new RestResponse<>().unauthorizedError(exception.getMessage(),HttpStatus.UNAUTHORIZED.value());
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public  ResponseEntity<?>handleBadRequestException( BadRequestException exception)
+    {
+        return  new RestResponse<>().badRequestError(exception.getMessage(),HttpStatus.BAD_REQUEST.value());
+    }
+
 }

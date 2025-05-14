@@ -72,4 +72,8 @@ public class RestResponse<T> {
         return new ResponseEntity<>(new RestResponse<>(errorCode, LocalDateTime.now(), data, message), HttpStatus.UNAUTHORIZED);
     }
 
+    public ResponseEntity<?> badRequestError(String message, long errorCode) {
+        return new ResponseEntity<>(new RestResponse<>(errorCode, LocalDateTime.now(), data, message), HttpStatus.BAD_REQUEST);
+    }
+
 }

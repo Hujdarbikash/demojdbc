@@ -2,6 +2,7 @@ package com.bikash.person.service.impl;
 
 import com.bikash.person.dtos.request.DepartmentRequestDto;
 import com.bikash.person.dtos.response.DepartmentResponseDto;
+import com.bikash.person.exceptions.BadRequestException;
 import com.bikash.person.exceptions.DatabaseOperationException;
 import com.bikash.person.exceptions.ResourceNotFoundException;
 import com.bikash.person.mappers.DepartmentMapper;
@@ -24,7 +25,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public DepartmentResponseDto createDepartment(DepartmentRequestDto requestDto) {
         if (departmentRepository.existByName(requestDto.getDepartmentName()))
-            throw new DatabaseOperationException("Department already exist with name:"+requestDto.getDepartmentName());
+            throw new BadRequestException("Department already exist with name:"+requestDto.getDepartmentName());
         try {
             return DepartmentMapper.toResponse(this.departmentRepository.createDepartment(DepartmentMapper.toEntity(requestDto)));
         } catch (Exception e) {
