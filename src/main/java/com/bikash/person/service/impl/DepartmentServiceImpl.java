@@ -69,6 +69,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         if (!this.departmentRepository.existById(departmentId))
             throw new ResourceNotFoundException("Department", "departmentId", departmentId);
+        if(this.departmentRepository.existByName(requestDto.getDepartmentName()))
+            throw new BadRequestException("Department already exist with  department name :{}" + requestDto.getDepartmentName());
         try {
             return DepartmentMapper.toResponse(this.departmentRepository.updateDepartment(DepartmentMapper.toEntity(requestDto), departmentId));
         } catch (Exception e) {
