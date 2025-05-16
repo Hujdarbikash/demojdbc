@@ -13,7 +13,6 @@ import java.util.List;
 @Repository
 public class AddressRepository implements CustomAddressRepository {
     private  final JdbcTemplate jdbcTemplate;
-
     public AddressRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -44,13 +43,10 @@ public class AddressRepository implements CustomAddressRepository {
         List<Address> results = this.jdbcTemplate.query(sql, new Object[]{employeeId}, new AddressRowMapper());
         return results.isEmpty() ? null : results.get(0);
     }
-
     @Override
     public boolean existByEmployeeId(long employeeId)  {
         String sql = "select count(*) from address a where a.employee_id = ?";
         Integer count = this.jdbcTemplate.queryForObject(sql, Integer.class, employeeId);
         return  count>0;
     }
-
-
 }
