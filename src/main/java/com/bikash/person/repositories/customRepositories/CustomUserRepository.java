@@ -11,4 +11,7 @@ public interface CustomUserRepository {
     User createUser(UserRequest request,long roleId);
 
     Optional<User>findByUsername(String email);
+
+
+    User getUserById(long userId);
 }

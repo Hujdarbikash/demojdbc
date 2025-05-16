@@ -1,6 +1,7 @@
 package com.bikash.person.repositories;
 
 import com.bikash.person.dtos.request.RoleRequest;
+import com.bikash.person.mappers.RoleRowMapper;
 import com.bikash.person.models.Role;
 import com.bikash.person.repositories.customRepositories.RoleCustomRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,6 +9,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.util.List;
 
 @Repository
 public class RoleRepository implements RoleCustomRepository {
@@ -44,5 +46,36 @@ public class RoleRepository implements RoleCustomRepository {
         return  result>0;
 
     }
+
+    @Override
+    public Role geRoleById(long id) {
+        String sql= "select * from role where role_id=?";
+        Role role = this.jdbcTemplate.queryForObject(sql, new RoleRowMapper(), id);
+        return  role;
+    }
+
+    @Override
+    public List<Role> getAllRoles() {
+        String sql = "select * from role";
+        List<Role> roles = this.jdbcTemplate.query(sql, new RoleRowMapper());
+        return  roles;
+    }
+
+    @Override
+    public List<Role> getALlRolesByUserId(long userId) {
+
+
+        String sql = "select r.role_id,r.name "+
+                "from users u "+
+                "join users_role  ur on u.user_id = ur.user_id " +
+                "join role r on ur.role_id =r.role_id "+
+                "where u.user_id = ?";
+
+        List<Role> roles = this.jdbcTemplate.query(sql, new RoleRowMapper(), userId);
+        return  roles;
+
+    }
+
+
 }
 

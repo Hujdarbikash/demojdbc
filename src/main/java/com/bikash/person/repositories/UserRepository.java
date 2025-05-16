@@ -17,16 +17,19 @@ import java.util.Optional;
 @Repository
 public class UserRepository implements CustomUserRepository {
 
-    private  final JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    public UserRepository(JdbcTemplate jdbcTemplate) {
+    private final RoleRepository roleRepository;
+
+    public UserRepository(JdbcTemplate jdbcTemplate, RoleRepository roleRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.roleRepository = roleRepository;
     }
 
 
     @Transactional
     @Override
-    public User createUser(UserRequest request,long roleId) {
+    public User createUser(UserRequest request, long roleId) {
 
         String sql = "INSERT INTO users (username, email, password, passwordCount) VALUES (?, ?, ?, ?)";
 
@@ -58,10 +61,38 @@ public class UserRepository implements CustomUserRepository {
         return user;
 
     }
+
     @Override
     public Optional<User> findByUsername(String email) {
         String sql = "SELECT * FROM users WHERE email = ?";
-        List<User> users = this.jdbcTemplate.query(sql, new UserRowMapper(),email);
-        return users.stream().findFirst();
+        List<User> users = this.jdbcTemplate.query(sql, new UserRowMapper(), email);
+        if (!users.isEmpty()) {
+            User user = users.get(0);
+            User responseUser = generateResponse(user);
+            return Optional.of(responseUser);
+        }
+        return Optional.empty();
     }
+
+    @Override
+    public User getUserById(long userId) {
+
+        String sql = "select * from  user where user_id = ?";
+        User user = this.jdbcTemplate.queryForObject(sql, new UserRowMapper(), userId);
+        return  generateResponse(user);
+
+    }
+
+
+    public User generateResponse(User user) {
+        User responseUser = new User();
+        responseUser.setId(user.getId());
+        responseUser.setUsername(user.getUsername());
+        responseUser.setEmail(user.getEmail());
+        responseUser.setPasswordCount(user.getPasswordCount());
+        responseUser.setPassword(user.getPassword());
+        responseUser.setRoles(this.roleRepository.getALlRolesByUserId(user.getId()));
+        return responseUser;
+    }
+
 }
